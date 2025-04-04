@@ -1,4 +1,3 @@
-
 name: Dev
 on:
   workflow_dispatch:
@@ -71,8 +70,10 @@ jobs:
         run: |
           $xmlContent = Get-Content BetterGenshinImpact/BetterGenshinImpact.csproj
           $version = ($xmlContent | Select-String -Pattern 'AssemblyVersion\>(.*)\<\/AssemblyVersion').Matches.Groups[1].Value
-          echo "version=$version" >$env:GITHUB_OUTPUT
-          echo "::notice::Version number is: $version"
+          $buildNumber = "${{ github.run_number }}"
+          $fullVersion = "$version-$buildNumber"
+          echo "version=$fullVersion" >$env:GITHUB_OUTPUT
+          echo "::notice::Version number is: $fullVersion"
       - name: 🛠️ Build application
         run: dotnet publish BetterGenshinImpact/BetterGenshinImpact.csproj -c Release -p:PublishProfile=FolderProfile
         continue-on-error: true
